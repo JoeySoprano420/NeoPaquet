@@ -1,0 +1,184 @@
+-- ======================================================
+-- stdlib/linear_algebra.np
+-- NeoPaquet Linear Algebra Library
+-- Unified vectors + matrices for physics and graphics
+-- ======================================================
+
+import "stdlib/math.np"
+import "stdlib/matrix.np"
+
+-- 🔹 Vector Operations --------------------------------
+
+@func ("vec2_add") [x1, y1, x2, y2] go {
+    return [x1 + x2, y1 + y2]
+}
+
+@func ("vec3_add") [x1, y1, z1, x2, y2, z2] go {
+    return [x1 + x2, y1 + y2, z1 + z2]
+}
+
+@func ("vec2_sub") [x1, y1, x2, y2] go {
+    return [x1 - x2, y1 - y2]
+}
+
+@func ("vec3_sub") [x1, y1, z1, x2, y2, z2] go {
+    return [x1 - x2, y1 - y2, z1 - z2]
+}
+
+@func ("vec2_scale") [x, y, s] go {
+    return [x*s, y*s]
+}
+
+@func ("vec3_scale") [x, y, z, s] go {
+    return [x*s, y*s, z*s]
+}
+
+@func ("vec2_norm") [x, y] go {
+    m = mag2(x, y)
+    if m == 0 { dismiss }
+    return [x/m, y/m]
+}
+
+@func ("vec3_norm") [x, y, z] go {
+    m = mag3(x, y, z)
+    if m == 0 { dismiss }
+    return [x/m, y/m, z/m]
+}
+
+-- 🔹 Matrix Transformations ---------------------------
+
+-- Identity Matrices
+@func ("mat2_identity") [] go {
+    return [1, 0,
+            0, 1]
+}
+
+@func ("mat3_identity") [] go {
+    return [1, 0, 0,
+            0, 1, 0,
+            0, 0, 1]
+}
+
+@func ("mat4_identity") [] go {
+    return [1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 1]
+}
+
+-- Translation (2D/3D)
+@func ("mat3_translate") [tx, ty] go {
+    return [1, 0, tx,
+            0, 1, ty,
+            0, 0, 1]
+}
+
+@func ("mat4_translate") [tx, ty, tz] go {
+    return [1, 0, 0, tx,
+            0, 1, 0, ty,
+            0, 0, 1, tz,
+            0, 0, 0, 1]
+}
+
+-- Scaling
+@func ("mat3_scale") [sx, sy] go {
+    return [sx, 0, 0,
+            0, sy, 0,
+            0, 0, 1]
+}
+
+@func ("mat4_scale") [sx, sy, sz] go {
+    return [sx, 0,  0,  0,
+            0,  sy, 0,  0,
+            0,  0,  sz, 0,
+            0,  0,  0,  1]
+}
+
+-- Rotation (2D)
+@func ("mat2_rotate") [theta] go {
+    c = cos(theta)
+    s = sin(theta)
+    return [c, -s,
+            s,  c]
+}
+
+-- Rotation (3D: X, Y, Z)
+@func ("mat4_rotate_x") [theta] go {
+    c = cos(theta)
+    s = sin(theta)
+    return [1, 0,  0, 0,
+            0, c, -s, 0,
+            0, s,  c, 0,
+            0, 0,  0, 1]
+}
+
+@func ("mat4_rotate_y") [theta] go {
+    c = cos(theta)
+    s = sin(theta)
+    return [ c, 0, s, 0,
+             0, 1, 0, 0,
+            -s, 0, c, 0,
+             0, 0, 0, 1]
+}
+
+@func ("mat4_rotate_z") [theta] go {
+    c = cos(theta)
+    s = sin(theta)
+    return [c, -s, 0, 0,
+            s,  c, 0, 0,
+            0,  0, 1, 0,
+            0,  0, 0, 1]
+}
+
+-- 🔹 Projection Matrices ------------------------------
+
+-- Orthographic Projection
+@func ("mat4_ortho") [left, right, bottom, top, near, far] go {
+    return [2/(right-left), 0, 0, -(right+left)/(right-left),
+            0, 2/(top-bottom), 0, -(top+bottom)/(top-bottom),
+            0, 0, -2/(far-near), -(far+near)/(far-near),
+            0, 0, 0, 1]
+}
+
+-- Perspective Projection
+@func ("mat4_perspective") [fov, aspect, near, far] go {
+    f = 1 / tan(fov/2)
+    return [f/aspect, 0, 0, 0,
+            0, f, 0, 0,
+            0, 0, (far+near)/(near-far), (2*far*near)/(near-far),
+            0, 0, -1, 0]
+}
+
+-- LookAt Matrix (camera)
+@func ("mat4_lookat") [eyeX, eyeY, eyeZ, cx, cy, cz, upX, upY, upZ] go {
+    -- forward
+    fx = cx - eyeX
+    fy = cy - eyeY
+    fz = cz - eyeZ
+    f = vec3_norm(fx, fy, fz)
+
+    -- up normalized
+    u = vec3_norm(upX, upY, upZ)
+
+    -- side = f x u
+    sx = f[1]*u[2] - f[2]*u[1]
+    sy = f[2]*u[0] - f[0]*u[2]
+    sz = f[0]*u[1] - f[1]*u[0]
+
+    -- recompute true up
+    ux = sx*f[1] - sy*f[0]
+    uy = sy*f[2] - sz*f[1]
+    uz = sz*f[0] - sx*f[2]
+
+    return [ sx,  ux, -f[0], 0,
+             sy,  uy, -f[1], 0,
+             sz,  uz, -f[2], 0,
+            -(sx*eyeX + sy*eyeY + sz*eyeZ),
+            -(ux*eyeX + uy*eyeY + uz*eyeZ),
+             f[0]*eyeX + f[1]*eyeY + f[2]*eyeZ,
+             1 ]
+}
+
+-- ======================================================
+-- End of stdlib/linear_algebra.np
+-- ======================================================

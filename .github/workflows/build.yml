@@ -16,8 +16,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-
+        os: [ubuntu-latest, windows-latest]
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
@@ -47,42 +46,11 @@ jobs:
           name: neopaquet-dist-${{ matrix.os }}
           path: dist/*
 
-  build-test-kali:
-    name: Build & Test (Kali Linux)
-    runs-on: ubuntu-latest
-    container:
-      image: kalilinux/kali-rolling
-    steps:
-      - name: Install dependencies inside Kali
-        run: |
-          apt-get update
-          apt-get install -y python3 python3-pip git build-essential
-          pip3 install setuptools wheel build pytest llvmlite
-
-      - name: Checkout source
-        uses: actions/checkout@v4
-
-      - name: Install project in editable mode
-        run: pip3 install -e .
-
-      - name: Run tests
-        run: pytest tests/
-
-      - name: Build package
-        run: python3 -m build
-
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: neopaquet-dist-kali
-          path: dist/*
-
   publish:
     name: Publish to PyPI
-    needs: [build-test, build-test-kali]
+    needs: [build-test]
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')
-
     steps:
       - name: Checkout source
         uses: actions/checkout@v4

@@ -1,0 +1,19 @@
+-- Fibonacci sequence up to N
+@func ("fib") [n] go {
+  if n <= 1 {
+    return n
+  } else {
+    return fib(n - 1) + fib(n - 2)
+  }
+}
+
+src () "stdout" {
+  i = 0
+  loop {
+    if i == 10 {
+      break
+    }
+    print [fib(i)]
+    i = i + 1
+  }
+} run

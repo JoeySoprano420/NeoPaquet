@@ -731,3 +731,51 @@ Hello NeoPaquet!
 
 ---
 
+Compile to LLVM IR
+
+(Bash)
+
+$ npaquetc hello.np --emit llvm -o hello.ll
+LLVM IR written to hello.ll
+
+
+Compile to NASM assembly
+
+(Bash)
+
+$ npaquetc hello.np --emit asm -o hello.asm
+NASM assembly written to hello.asm
+
+## ``` ✅ How to Install Globally
+
+From the project root (where setup.py / pyproject.toml lives):
+
+
+Install in development mode:
+
+(Bash)
+
+pip install -e .
+
+
+Or build and install a wheel
+
+
+(Bash)
+
+python -m build
+pip install dist/npaquetc-1.0.0-py3-none-any.whl
+
+python -m build
+pip install dist/npaquetc-1.0.0-py3-none-any.whl
+
+
+After installation you can run globally:
+
+(Bash)
+
+$ npaquetc hello.np -o hello.exe
+
+
+## ``` ⚡ At this point NeoPaquet is a real distributable compiler toolchain.
+

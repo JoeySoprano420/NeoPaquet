@@ -1,0 +1,4 @@
+-- Hello World in NeoPaquet
+src () "stdout" {
+  print ["Hello NeoPaquet!"]
+} run

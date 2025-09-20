@@ -1,0 +1,10 @@
+-- Demonstrating try/catch/clean
+src () "stdout" {
+  try {
+    x = 10 / 0
+  } catch {
+    print ["Divide by zero caught!"]
+  } clean {
+    print ["Cleanup executed."]
+  }
+} run

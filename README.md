@@ -720,7 +720,14 @@ It is most needed in **finance, defense, gaming, HPC, and embedded systems**. It
 
 ---
 
+Compile to executable
 
+(Bash)
+
+$ npaquetc hello.np -o hello.exe
+Executable generated: hello.exe
+$ ./hello.exe
+Hello NeoPaquet!
 
 ---
 

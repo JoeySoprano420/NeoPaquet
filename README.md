@@ -2,11 +2,7 @@
 
 # 📜 NeoPaquet Compiler (`npaquetc`)
 
-[![License: S.U.E.T.](https://img.shields.io/badge/license-S.U.E.T.-purple)](https://github.com/JoeySoprano420/NeoPaquet/blob/main/License.md)
-[![PyPI](https://img.shields.io/pypi/v/npaquetc?color=blue)](https://pypi.org/project/npaquetc/)
-[![Build](https://github.com/JoeySoprano420/NeoPaquet/actions/workflows/build.yml/badge.svg)](https://github.com/JoeySoprano420/NeoPaquet/actions/workflows/build.yml)
-[![Release](https://img.shields.io/github/v/release/JoeySoprano420/NeoPaquet?color=orange)](https://github.com/JoeySoprano420/NeoPaquet/releases)
-[![Python](https://img.shields.io/pypi/pyversions/npaquetc)](https://pypi.org/project/npaquetc/)
+[![License: S.U.E.T.](https://img.shields.io/badge/license-S.U.E.T.-purple)]
 
 **Tagline:**  
 > *NeoPaquet — From Dodecagram to Native, Liquified into Execution.*

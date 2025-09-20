@@ -1,0 +1,132 @@
+-- ======================================================
+-- stdlib/graphics.np
+-- NeoPaquet Graphics Library
+-- Basic drawing, transformations, and OpenGL/DirectX interop
+-- ======================================================
+
+import "stdlib/core.np"
+import "stdlib/math.np"
+import "stdlib/linear_algebra.np"
+
+-- 🔹 Low-Level Setup ----------------------------------
+
+@func ("gfx_init") [width, height, title] go {
+    extern ("glfwInit") []
+    extern ("glfwCreateWindow") [width, height, title, 0, 0]
+    window = glfwCreateWindow(width, height, title, 0, 0)
+    extern ("glfwMakeContextCurrent") [window]
+    return window
+}
+
+@func ("gfx_close") [window] go {
+    extern ("glfwDestroyWindow") [window]
+    extern ("glfwTerminate") []
+    return 0
+}
+
+@func ("gfx_should_close") [window] go {
+    extern ("glfwWindowShouldClose") [window]
+    return glfwWindowShouldClose(window)
+}
+
+@func ("gfx_swap_buffers") [window] go {
+    extern ("glfwSwapBuffers") [window]
+    return 0
+}
+
+@func ("gfx_poll_events") [] go {
+    extern ("glfwPollEvents") []
+    return 0
+}
+
+-- 🔹 Drawing Primitives -------------------------------
+
+@func ("gfx_clear") [] go {
+    extern ("glClear") [0x00004000]   -- GL_COLOR_BUFFER_BIT
+    return 0
+}
+
+@func ("gfx_set_color") [r, g, b, a] go {
+    extern ("glColor4f") [r, g, b, a]
+    return 0
+}
+
+@func ("gfx_draw_point") [x, y] go {
+    extern ("glBegin") [0x0000]   -- GL_POINTS
+    extern ("glVertex2f") [x, y]
+    extern ("glEnd") []
+    return 0
+}
+
+@func ("gfx_draw_line") [x1, y1, x2, y2] go {
+    extern ("glBegin") [0x0001]   -- GL_LINES
+    extern ("glVertex2f") [x1, y1]
+    extern ("glVertex2f") [x2, y2]
+    extern ("glEnd") []
+    return 0
+}
+
+@func ("gfx_draw_triangle") [x1, y1, x2, y2, x3, y3] go {
+    extern ("glBegin") [0x0004]   -- GL_TRIANGLES
+    extern ("glVertex2f") [x1, y1]
+    extern ("glVertex2f") [x2, y2]
+    extern ("glVertex2f") [x3, y3]
+    extern ("glEnd") []
+    return 0
+}
+
+@func ("gfx_draw_rect") [x, y, w, h] go {
+    extern ("glBegin") [0x0007]   -- GL_QUADS
+    extern ("glVertex2f") [x, y]
+    extern ("glVertex2f") [x+w, y]
+    extern ("glVertex2f") [x+w, y+h]
+    extern ("glVertex2f") [x, y+h]
+    extern ("glEnd") []
+    return 0
+}
+
+-- 🔹 Matrix Transform Wrappers ------------------------
+
+@func ("gfx_translate") [tx, ty, tz] go {
+    extern ("glTranslatef") [tx, ty, tz]
+    return 0
+}
+
+@func ("gfx_scale") [sx, sy, sz] go {
+    extern ("glScalef") [sx, sy, sz]
+    return 0
+}
+
+@func ("gfx_rotate") [angle, x, y, z] go {
+    extern ("glRotatef") [angle, x, y, z]
+    return 0
+}
+
+@func ("gfx_load_matrix4") [m] go {
+    extern ("glLoadMatrixf") [m]
+    return 0
+}
+
+@func ("gfx_mult_matrix4") [m] go {
+    extern ("glMultMatrixf") [m]
+    return 0
+}
+
+-- 🔹 Main Loop Helper ---------------------------------
+
+@func ("gfx_run") [window, callback] go {
+    loop {
+        if gfx_should_close(window) { break }
+
+        gfx_clear()
+        callback()
+        gfx_swap_buffers(window)
+        gfx_poll_events()
+    }
+    gfx_close(window)
+    return 0
+}
+
+-- ======================================================
+-- End of stdlib/graphics.np
+-- ======================================================

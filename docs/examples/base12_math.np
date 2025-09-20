@@ -1,0 +1,8 @@
+-- Demonstrating base-12 numbers
+src () "stdout" {
+  x = 5a   -- base-12 = 70 decimal
+  y = b    -- base-12 = 11 decimal
+  z = x + y
+  print ["5a + b in base-12 is:"]
+  print [z]
+} run

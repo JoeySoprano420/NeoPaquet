@@ -1,0 +1,14 @@
+-- Recursive factorial
+@func ("factorial") [n] go {
+  if n <= 1 {
+    return 1
+  } else {
+    return n * factorial(n - 1)
+  }
+}
+
+src () "stdout" {
+  result = factorial(5)
+  print ["Factorial of 5 is:"]
+  print [result]
+} run

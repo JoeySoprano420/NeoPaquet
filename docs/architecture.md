@@ -1,6 +1,3 @@
-# 📂 `docs/architecture.md`
-
-```markdown
 # 🏗️ NeoPaquet Compiler Architecture
 
 This document explains the **toolchain architecture** of NeoPaquet — how source code flows from `.np` files into **LLVM IR**, **NASM assembly**, and finally **native executables**.

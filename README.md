@@ -981,3 +981,13 @@ Thank you for helping build NeoPaquet! 🙌
 
 ## ~~~~~
 
+✅ docs/examples Adds
+
+A curated examples library: from beginner (hello world) → intermediate (factorial, fibonacci, loops) → advanced (matrix multiply, error handling, C interop).
+
+Each file is ready-to-compile with npaquetc file.np -o file.exe.
+
+Helps onboard new users fast while stress-testing the compiler.
+
+## ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+

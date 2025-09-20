@@ -1,0 +1,104 @@
+-- ======================================================
+-- stdlib/io.np
+-- NeoPaquet Standard I/O Library
+-- Printing, reading, and file operations
+-- ======================================================
+
+-- 🔹 Printing Functions ---------------------------------
+
+@func ("print") [s] go {
+    extern ("puts") [s]
+    return puts(s)
+}
+
+@func ("println") [s] go {
+    extern ("puts") [s]
+    puts(s)
+    puts("\n")
+    return 0
+}
+
+@func ("print_int") [n] go {
+    extern ("printf") [fmt, n]
+    return printf("%d", n)
+}
+
+@func ("print_base12") [n] go {
+    -- convert int → base-12 string before printing
+    extern ("printf") [fmt, n]
+    return printf("%x", n) -- TODO: refine base-12 formatting
+}
+
+-- 🔹 Input Functions -----------------------------------
+
+@func ("read_line") [] go {
+    extern ("fgets") [buffer, size, stdin]
+    buffer = mem.arena { size=1024 }
+    fgets(buffer, 1024, stdin)
+    return buffer
+}
+
+@func ("read_char") [] go {
+    extern ("getchar") []
+    return getchar()
+}
+
+@func ("read_int") [] go {
+    extern ("scanf") [fmt, &n]
+    n = 0
+    scanf("%d", &n)
+    return n
+}
+
+-- 🔹 File I/O Functions --------------------------------
+
+@func ("file_open") [path, mode] go {
+    extern ("fopen") [path, mode]
+    return fopen(path, mode)
+}
+
+@func ("file_close") [f] go {
+    extern ("fclose") [f]
+    return fclose(f)
+}
+
+@func ("file_write") [f, s] go {
+    extern ("fputs") [s, f]
+    return fputs(s, f)
+}
+
+@func ("file_read") [f, size] go {
+    buffer = mem.arena { size=size }
+    extern ("fread") [buffer, 1, size, f]
+    fread(buffer, 1, size, f)
+    return buffer
+}
+
+@func ("file_read_line") [f] go {
+    buffer = mem.arena { size=1024 }
+    extern ("fgets") [buffer, 1024, f]
+    fgets(buffer, 1024, f)
+    return buffer
+}
+
+-- 🔹 Convenience Wrappers ------------------------------
+
+@func ("write_file") [path, data] go {
+    f = file_open(path, "w")
+    file_write(f, data)
+    file_close(f)
+    return 0
+}
+
+@func ("read_file") [path] go {
+    f = file_open(path, "r")
+    buffer = mem.arena { size=4096 }
+    extern ("fread") [buffer, 1, 4096, f]
+    fread(buffer, 1, 4096, f)
+    file_close(f)
+    return buffer
+}
+
+-- ======================================================
+-- End of stdlib/io.np
+-- ======================================================

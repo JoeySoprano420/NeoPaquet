@@ -1,0 +1,107 @@
+name: NeoPaquet CI/CD
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - "v*.*.*"
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-test:
+    name: Build & Test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install build dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install setuptools wheel build pytest
+
+      - name: Install project in editable mode
+        run: pip install -e .
+
+      - name: Run tests
+        run: pytest tests/
+
+      - name: Build package
+        run: python -m build
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: neopaquet-dist-${{ matrix.os }}
+          path: dist/*
+
+  build-test-kali:
+    name: Build & Test (Kali Linux)
+    runs-on: ubuntu-latest
+    container:
+      image: kalilinux/kali-rolling
+    steps:
+      - name: Install dependencies inside Kali
+        run: |
+          apt-get update
+          apt-get install -y python3 python3-pip git build-essential
+          pip3 install setuptools wheel build pytest llvmlite
+
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Install project in editable mode
+        run: pip3 install -e .
+
+      - name: Run tests
+        run: pytest tests/
+
+      - name: Build package
+        run: python3 -m build
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: neopaquet-dist-kali
+          path: dist/*
+
+  publish:
+    name: Publish to PyPI
+    needs: [build-test, build-test-kali]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install build tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install build twine
+
+      - name: Build package
+        run: python -m build
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          user: __token__
+          password: ${{ secrets.PYPI_API_TOKEN }}

@@ -1,4 +1,3 @@
-markdown
 # 🔧 NeoPaquet Developer Internals
 *A deep dive into compiler internals for contributors*
 

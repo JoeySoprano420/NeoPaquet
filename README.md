@@ -1,5 +1,15 @@
 # NeoPaquet
 
+# 📜 NeoPaquet Compiler (`npaquetc`)
+
+[![License: S.U.E.T.](https://img.shields.io/badge/license-S.U.E.T.-purple)](https://github.com/JoeySoprano420/NeoPaquet/blob/main/License.md)
+[![PyPI](https://img.shields.io/pypi/v/npaquetc?color=blue)](https://pypi.org/project/npaquetc/)
+[![Build](https://github.com/JoeySoprano420/NeoPaquet/actions/workflows/build.yml/badge.svg)](https://github.com/JoeySoprano420/NeoPaquet/actions/workflows/build.yml)
+[![Release](https://img.shields.io/github/v/release/JoeySoprano420/NeoPaquet?color=orange)](https://github.com/JoeySoprano420/NeoPaquet/releases)
+[![Python](https://img.shields.io/pypi/pyversions/npaquetc)](https://pypi.org/project/npaquetc/)
+
+**Tagline:**  
+> *NeoPaquet — From Dodecagram to Native, Liquified into Execution.*
 
 
 ---
@@ -876,4 +886,98 @@ S.U.E.T. License — free to use, modify, and distribute.
 
 ## ~~~~~
 
+
+📂 CONTRIBUTING.md
+# Contributing to NeoPaquet
+
+First off, thank you for taking the time to contribute! 🚀  
+NeoPaquet is a low-level, execution-oriented compiler project built on LLVM + NASM.  
+We welcome bug reports, feature requests, documentation improvements, and pull requests.
+
+---
+
+## 🛠 How to Contribute
+
+### 1. Fork & Clone
+```bash
+git clone https://github.com/<your-username>/NeoPaquet.git
+cd NeoPaquet
+
+2. Create a Branch
+git checkout -b feature/my-new-feature
+
+3. Run Tests
+
+Make sure all tests pass before submitting:
+
+pytest tests/
+
+4. Commit Your Changes
+
+Follow conventional commit messages:
+
+feat: add CIAM memory macros
+fix: handle multi-line comments in lexer
+docs: improve README with CLI examples
+
+5. Push & Open PR
+git push origin feature/my-new-feature
+
+
+Then open a Pull Request against main.
+
+🧪 Testing
+
+All new features must include tests in tests/.
+
+Run:
+
+pytest
+
+
+Ensure compatibility across:
+
+Ubuntu
+
+Windows
+
+macOS
+
+Kali Linux (Docker)
+
+📜 Coding Guidelines
+
+Python code: PEP 8 style.
+
+Compiler structure:
+
+lexer.py → parser.py → ast.py → irgen.py → nasmgen.py.
+
+Each module should have a debug harness (if __name__ == "__main__":).
+
+🧩 Issues
+
+Use the GitHub Issues
+ tab.
+
+Labels:
+
+bug
+
+enhancement
+
+good first issue
+
+help wanted
+
+🤝 Community
+
+Be respectful and collaborative.
+
+Follow the Code of Conduct
+.
+
+Thank you for helping build NeoPaquet! 🙌
+
+## ~~~~~
 

@@ -1,6 +1,3 @@
-# 📂 `docs/guide.md`
-
-````markdown
 # 📘 NeoPaquet Developer Guide
 *A Deep Dive into the Compiler Architecture*  
 

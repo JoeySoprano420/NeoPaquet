@@ -720,62 +720,160 @@ It is most needed in **finance, defense, gaming, HPC, and embedded systems**. It
 
 ---
 
-Compile to executable
 
-(Bash)
 
+---
+
+# 📜 NeoPaquet Compiler (`npaquetc`)
+
+**Tagline:**
+
+> *NeoPaquet — From Dodecagram to Native, Liquified into Execution.*
+
+NeoPaquet is an **execution-oriented, AOT-compiled programming language** that transpiles into **LLVM IR → NASM → Native Executables**.
+It uses a **dodecagram AST (base-12)**, machine-friendly linguistics, and CIAM-based memory control for blazing-fast, zero-cost runtime performance.
+
+---
+
+## 🚀 Features
+
+* **Execution-Oriented Paradigm** — Code defined by how it runs, not how it looks.
+* **Dodecagram AST (0–9, a, b)** — Compact and precise representation.
+* **AOT Compilation Pipeline** — `.np` → LLVM IR → NASM → `.exe` / `.out`.
+* **Automatic Optimizations** baked in:
+
+  * PGO (Profile-Guided Optimization)
+  * Loop Unrolling
+  * Tail-Call Elimination
+  * Constant Folding & Peephole Passes
+  * Intrinsic Vectorization
+* **Memory Model** — User-defined via **CIAM (Contextual Inference Abstraction Macros)**.
+* **Error Handling** — Explicit execution-aware model:
+
+  ```neopaquet
+  try { ... } catch { ... } retry { ... } clean { ... } dismiss { ... }
+  ```
+* **Interop** — Seamless C/LLVM ABI + direct hooks into Unreal Engine, Unity, DirectX, Vulkan, OpenGL, WASM.
+* **Security First** — Anti side-loading, anti injection, anti use-after-free.
+
+---
+
+## 📂 Repository Layout
+
+```
+neopaquet/
+ ├── npaquetc/             # Compiler frontend + backends
+ │   ├── lexer.py          # Lexical analyzer
+ │   ├── parser.py         # Grammar + AST builder
+ │   ├── ast.py            # Dodecagram AST
+ │   ├── irgen.py          # LLVM IR generator
+ │   ├── nasmgen.py        # NASM backend + linker
+ │   ├── main.py           # CLI entry point (npaquetc)
+ ├── stdlib/               # Standard library
+ │   ├── io.np
+ │   ├── math.np
+ ├── tests/                # Regression tests
+ │   ├── hello_world.np
+ │   ├── loop_test.np
+ ├── setup.py
+ ├── pyproject.toml
+ ├── README.md
+```
+
+---
+
+## ⚙️ Installation
+
+### Install from source
+
+```bash
+git clone https://github.com/your-org/npaquetc.git
+cd npaquetc
+pip install -e .
+```
+
+### Or install via wheel
+
+```bash
+python -m build
+pip install dist/npaquetc-1.0.0-py3-none-any.whl
+```
+
+After installation, the global CLI is available:
+
+```bash
+$ npaquetc --help
+```
+
+---
+
+## 🖋️ Example Program
+
+### `hello.np`
+
+```neopaquet
+src () "stdout" { print ["Hello NeoPaquet!"] } run
+```
+
+### Compile & Run
+
+```bash
 $ npaquetc hello.np -o hello.exe
 Executable generated: hello.exe
 $ ./hello.exe
 Hello NeoPaquet!
+```
 
 ---
 
-Compile to LLVM IR
+## 🔧 CLI Options
 
-(Bash)
+```bash
+npaquetc input.np -o output [--emit exe|llvm|asm]
 
-$ npaquetc hello.np --emit llvm -o hello.ll
-LLVM IR written to hello.ll
+Options:
+  -o, --output    Specify output file (default: a.out)
+  --emit llvm     Emit LLVM IR (.ll)
+  --emit asm      Emit NASM assembly (.asm)
+  --emit exe      Build native executable (default)
+```
 
+---
 
-Compile to NASM assembly
+## 🧩 Standard Library
 
-(Bash)
+NeoPaquet ships with a minimal but optimized stdlib:
 
-$ npaquetc hello.np --emit asm -o hello.asm
-NASM assembly written to hello.asm
+* **io.np** — printing, reading, file I/O.
+* **math.np** — basic arithmetic, trig, vector ops.
+* **memory.np** — arenas, slices, manual CIAM macros.
+* **threading.np** — basic concurrency & locks.
 
-## ``` ✅ How to Install Globally
+---
 
-From the project root (where setup.py / pyproject.toml lives):
+## 🧪 Tests
 
+```bash
+pytest tests/
+```
 
-Install in development mode:
+---
 
-(Bash)
+## 🔒 License
 
-pip install -e .
+S.U.E.T. License — free to use, modify, and distribute. 
 
+---
 
-Or build and install a wheel
+## 🌐 Links
 
+* Homepage: [NeoPaquet Project](https://github.com/JoeySoprano420/NeoPaquet/tree/main/npaquetc)
+* Repository: [GitHub](https://github.com/JoeySoprano420/NeoPaquet/tree/main)
 
-(Bash)
+---
 
-python -m build
-pip install dist/npaquetc-1.0.0-py3-none-any.whl
+✅ This `README.md` explains what NeoPaquet is, how to install it, how to use it, and why it matters.
 
-python -m build
-pip install dist/npaquetc-1.0.0-py3-none-any.whl
+## ~~~~~
 
-
-After installation you can run globally:
-
-(Bash)
-
-$ npaquetc hello.np -o hello.exe
-
-
-## ``` ⚡ At this point NeoPaquet is a real distributable compiler toolchain.
 

@@ -1,0 +1,12 @@
+// Simple NeoPaquet program for testing
+let message: String = "Hello, World!"
+let count: i32 = 42
+
+fn greet(name: String) -> String {
+    return "Hello, " + name + "!"
+}
+
+fn main() -> i32 {
+    let greeting = greet("NeoPaquet")
+    return 0
+}

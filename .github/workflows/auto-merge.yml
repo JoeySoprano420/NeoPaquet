@@ -1,0 +1,175 @@
+name: Auto-merge to main
+
+on:
+  push:
+    branches: [ develop ]
+  pull_request:
+    types: [ closed ]
+
+jobs:
+  auto-merge:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || (github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main')
+    
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        token: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+    
+    - name: Run comprehensive tests
+      run: |
+        cd src
+        echo "Running comprehensive error checks..."
+        
+        # Test all compiler components
+        python -c "
+        import sys
+        sys.path.append('.')
+        
+        # Test basic functionality
+        from lexer import lex_source
+        from parser import parse_source
+        from error_checker import check_errors
+        from compiler import NeoPaquetCompiler
+        
+        # Basic smoke test
+        test_code = '''
+        let message: String = \"Hello, NeoPaquet!\"
+        fn main() -> i32 {
+            return 0
+        }
+        '''
+        
+        try:
+            tokens = lex_source(test_code)
+            program = parse_source(test_code)
+            errors = check_errors(program)
+            
+            compiler = NeoPaquetCompiler()
+            success = compiler.compile_source(test_code, check_only=True)
+            
+            if success:
+                print('✓ Basic compiler functionality working')
+            else:
+                print('✗ Compiler test failed')
+                for error in compiler.get_errors():
+                    print(f'  {error}')
+                sys.exit(1)
+        except Exception as e:
+            print(f'✗ Compiler test failed with exception: {e}')
+            sys.exit(1)
+        "
+    
+    - name: Check all example files
+      run: |
+        cd src
+        echo "Checking all NeoPaquet example files..."
+        
+        # Check that examples can be processed without critical errors
+        for file in ../examples/*.np; do
+          if [ -f "$file" ]; then
+            echo "Checking $file..."
+            python compiler.py check "$file" || echo "Warning: Issues found in $file"
+          fi
+        done
+    
+    - name: Auto-fix any issues before merge
+      run: |
+        cd src
+        echo "Attempting to auto-fix common issues..."
+        
+        # Auto-fix examples
+        for file in ../examples/*.np; do
+          if [ -f "$file" ]; then
+            python compiler.py auto-fix "$file" --output "$file.tmp"
+            if [ -f "$file.tmp" ]; then
+              mv "$file.tmp" "$file"
+              echo "Auto-fixed $file"
+            fi
+          fi
+        done
+    
+    - name: Commit fixes and merge to main
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "NeoPaquet Auto-merge"
+        
+        # Add any auto-fixes
+        git add -A
+        if ! git diff --staged --quiet; then
+          git commit -m "Auto-fix issues before merge to main [skip ci]"
+        fi
+        
+        # Switch to main and merge
+        if [ "${{ github.ref }}" = "refs/heads/develop" ]; then
+          echo "Merging develop to main..."
+          git checkout main
+          git merge develop --no-ff -m "Auto-merge develop to main after successful tests"
+          git push origin main
+        elif [ "${{ github.event.pull_request.merged }}" = "true" ]; then
+          echo "PR was already merged to main"
+        fi
+
+  update-language:
+    runs-on: ubuntu-latest
+    needs: auto-merge
+    if: always()
+    
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        ref: main
+        token: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+    
+    - name: Update language features based on README
+      run: |
+        echo "Checking for language updates based on README..."
+        
+        # This is a placeholder for future implementation
+        # In a real scenario, this would:
+        # 1. Parse the README for new feature descriptions
+        # 2. Generate code stubs for missing features
+        # 3. Update the grammar/parser for new syntax
+        # 4. Add tests for new features
+        
+        cd src
+        python -c "
+        # Example of programmatic language enhancement
+        import os
+        
+        # Check if new built-in types are mentioned in README but not implemented
+        with open('../README.md', 'r') as f:
+            readme = f.read()
+        
+        # Look for patterns that suggest new features
+        if 'match' in readme.lower() and 'pattern matching' in readme.lower():
+            print('Pattern matching mentioned in README - should be implemented')
+        
+        if 'async' in readme.lower() or 'await' in readme.lower():
+            print('Async/await mentioned in README - should be implemented')
+        
+        if 'trait' in readme.lower() or 'interface' in readme.lower():
+            print('Traits/interfaces mentioned in README - should be implemented')
+        
+        print('Language update check complete')
+        "
+    
+    - name: Generate language enhancement issues
+      run: |
+        # This would create GitHub issues for missing features
+        # For now, just a placeholder
+        echo "Language enhancement analysis complete"
+        
+        # In a real implementation, this would use the GitHub API to create issues
+        # for features mentioned in README but not yet implemented

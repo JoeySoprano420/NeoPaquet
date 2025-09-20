@@ -1,0 +1,9 @@
+// Example with some common errors that can be auto-fixed
+let name = "Alice"
+let age = 25
+let score = 95.5
+let is_active = true
+
+fn calculate_score(base: i32) -> i32 {
+    return base * 2
+}

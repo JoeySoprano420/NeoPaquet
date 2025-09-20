@@ -1,0 +1,50 @@
+# Ignore build artifacts
+dist/
+build/
+*.egg-info/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.env
+
+# Ignore IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Ignore temporary files
+*.tmp
+*.temp
+.tmp/
+*.log
+*.out
+
+# Ignore OS files
+Thumbs.db
+.Trash-*
+
+# Ignore test artifacts
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.cache
+
+# Ignore deployment keys
+*.pem
+*.key
+secrets.yml
+
+# Allow specific files that might be ignored by default
+!.gitkeep
+
+# NeoPaquet specific
+*.fixed
+*.auto-fixed

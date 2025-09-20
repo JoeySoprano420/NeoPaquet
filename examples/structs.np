@@ -1,0 +1,38 @@
+// NeoPaquet Example: Data Structures
+
+// User-defined struct
+struct User {
+    name: String,
+    email: String,
+    age: u32,
+    active: bool
+}
+
+// Function that uses the struct
+fn create_user(name: String, email: String, age: u32) -> User {
+    return User {
+        name: name,
+        email: email,
+        age: age,
+        active: true
+    }
+}
+
+// Function with pattern matching (simplified)
+fn get_user_status(user: User) -> String {
+    if user.active {
+        return "Active user: " + user.name
+    } else {
+        return "Inactive user: " + user.name
+    }
+}
+
+fn main() -> i32 {
+    let user = create_user("Alice", "alice@example.com", 30)
+    let status = get_user_status(user)
+    
+    // Basic arithmetic
+    let years_to_retirement = 65 - user.age
+    
+    return 0
+}

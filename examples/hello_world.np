@@ -1,0 +1,32 @@
+// NeoPaquet Example: Hello World
+
+// Package declaration
+package hello-world version "0.1.0" {
+    dependencies {
+        "std/io" version ">=1.0.0"
+    }
+    
+    exports {
+        main
+    }
+}
+
+// Import standard library
+import io from "std/io" version ">=1.0.0"
+
+// Main function
+fn main() -> i32 {
+    let message: String = "Hello, NeoPaquet!"
+    io.println(message)
+    
+    let name = "World"
+    let greeting = greet(name)
+    io.println(greeting)
+    
+    return 0
+}
+
+// Helper function
+fn greet(name: String) -> String {
+    return "Hello, " + name + "!"
+}

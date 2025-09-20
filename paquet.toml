@@ -1,0 +1,17 @@
+[package]
+name = "neopaquet"
+version = "0.1.0"
+description = "NeoPaquet programming language compiler and runtime"
+license = "MIT"
+authors = ["NeoPaquet Development Team"]
+
+[dependencies]
+
+[dev-dependencies]
+
+[build]
+target = "native"
+optimization = "debug"
+
+[package.metadata]
+minimum_compiler_version = "0.1.0"

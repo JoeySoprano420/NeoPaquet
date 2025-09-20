@@ -1,0 +1,200 @@
+name: NeoPaquet Continuous Integration
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    # Run daily at 2 AM UTC to check for any issues
+    - cron: '0 2 * * *'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.8, 3.9, "3.10", "3.11"]
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        # Install any future dependencies here
+        # pip install -r requirements.txt
+    
+    - name: Run compiler tests
+      run: |
+        cd tests
+        python -m unittest test_compiler.py -v
+    
+    - name: Test example files
+      run: |
+        cd src
+        python compiler.py check ../examples/hello_world.np
+        python compiler.py check ../examples/structs.np
+    
+    - name: Run error checking on all .np files
+      run: |
+        cd src
+        find .. -name "*.np" -exec python compiler.py check {} \;
+
+  lint:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+    
+    - name: Install linting tools
+      run: |
+        python -m pip install --upgrade pip
+        pip install flake8 black isort mypy
+    
+    - name: Lint Python code with flake8
+      run: |
+        flake8 src/ tests/ --count --select=E9,F63,F7,F82 --show-source --statistics
+        flake8 src/ tests/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+    
+    - name: Check code formatting with black
+      run: |
+        black --check --diff src/ tests/
+    
+    - name: Check import sorting with isort
+      run: |
+        isort --check-only --diff src/ tests/
+    
+    - name: Type check with mypy (optional, may have issues)
+      run: |
+        mypy src/ tests/ --ignore-missing-imports || true
+
+  auto-fix:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+    
+    - name: Auto-fix common errors in NeoPaquet files
+      run: |
+        cd src
+        # Find all .np files and try to auto-fix them
+        find .. -name "*.np" | while read file; do
+          echo "Checking $file for auto-fixable errors..."
+          if python compiler.py auto-fix "$file" --output "$file.tmp"; then
+            if [ -f "$file.tmp" ]; then
+              echo "Auto-fixed errors in $file"
+              mv "$file.tmp" "$file"
+            fi
+          fi
+        done
+    
+    - name: Commit auto-fixes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add -A
+        if git diff --staged --quiet; then
+          echo "No changes to commit"
+        else
+          git commit -m "Auto-fix common NeoPaquet errors [skip ci]"
+          git push
+        fi
+
+  security:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+    
+    - name: Install security tools
+      run: |
+        python -m pip install --upgrade pip
+        pip install bandit safety
+    
+    - name: Run security checks with bandit
+      run: |
+        bandit -r src/ -f json -o bandit-report.json || true
+        bandit -r src/ 
+    
+    - name: Check for known security vulnerabilities
+      run: |
+        # safety check  # Uncomment when we have dependencies
+        echo "Security check placeholder"
+
+  build:
+    runs-on: ubuntu-latest
+    needs: [test, lint]
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+    
+    - name: Create distribution package
+      run: |
+        # Create a simple distribution structure
+        mkdir -p dist/neopaquet
+        cp -r src/* dist/neopaquet/
+        cp README.md dist/
+        cp paquet.toml dist/
+        
+        # Create a simple installer script
+        cat > dist/install.sh << 'EOF'
+        #!/bin/bash
+        # NeoPaquet Installation Script
+        
+        INSTALL_DIR="/usr/local/bin"
+        if [ ! -w "$INSTALL_DIR" ]; then
+          INSTALL_DIR="$HOME/.local/bin"
+          mkdir -p "$INSTALL_DIR"
+        fi
+        
+        echo "Installing NeoPaquet to $INSTALL_DIR..."
+        cp -r neopaquet "$INSTALL_DIR/"
+        
+        # Create wrapper script
+        cat > "$INSTALL_DIR/neo" << 'WRAPPER'
+        #!/bin/bash
+        python3 "$INSTALL_DIR/neopaquet/compiler.py" "$@"
+        WRAPPER
+        chmod +x "$INSTALL_DIR/neo"
+        
+        echo "NeoPaquet installed successfully!"
+        echo "Try: neo --version"
+        EOF
+        
+        chmod +x dist/install.sh
+    
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: neopaquet-dist
+        path: dist/
+        retention-days: 30

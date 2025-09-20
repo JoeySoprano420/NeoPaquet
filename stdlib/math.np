@@ -111,5 +111,136 @@
 }
 
 -- ======================================================
+-- stdlib/matrix.np
+-- NeoPaquet Matrix Math Library
+-- 2D / 3D / 4D matrix operations
+-- ======================================================
+
+-- 🔹 Matrix Addition -----------------------------------
+
+@func ("mat2_add") [a11, a12, a21, a22, b11, b12, b21, b22] go {
+    c11 = a11 + b11
+    c12 = a12 + b12
+    c21 = a21 + b21
+    c22 = a22 + b22
+    return [c11, c12, c21, c22]
+}
+
+@func ("mat3_add") [a, b] go {
+    -- expects arrays of 9
+    c = mem.arena { size=9 }
+    i = 0
+    loop {
+        if i == 9 { break }
+        c[i] = a[i] + b[i]
+        i = i + 1
+    }
+    return c
+}
+
+@func ("mat4_add") [a, b] go {
+    c = mem.arena { size=16 }
+    i = 0
+    loop {
+        if i == 16 { break }
+        c[i] = a[i] + b[i]
+        i = i + 1
+    }
+    return c
+}
+
+-- 🔹 Matrix Multiplication -----------------------------
+
+@func ("mat2_mul") [a11, a12, a21, a22, b11, b12, b21, b22] go {
+    c11 = a11*b11 + a12*b21
+    c12 = a11*b12 + a12*b22
+    c21 = a21*b11 + a22*b21
+    c22 = a21*b12 + a22*b22
+    return [c11, c12, c21, c22]
+}
+
+@func ("mat3_mul") [a, b] go {
+    c = mem.arena { size=9 }
+    i = 0
+    loop {
+        if i == 3 { 
+            j = 0
+            loop {
+                if j == 3 { break }
+                c[i*3 + j] = a[i*3+0]*b[0*3+j] + a[i*3+1]*b[1*3+j] + a[i*3+2]*b[2*3+j]
+                j = j + 1
+            }
+        }
+        i = i + 1
+        if i == 3 { break }
+    }
+    return c
+}
+
+@func ("mat4_mul") [a, b] go {
+    c = mem.arena { size=16 }
+    i = 0
+    loop {
+        if i == 4 {
+            break
+        }
+        j = 0
+        loop {
+            if j == 4 { break }
+            c[i*4+j] = a[i*4+0]*b[0*4+j] + a[i*4+1]*b[1*4+j] + a[i*4+2]*b[2*4+j] + a[i*4+3]*b[3*4+j]
+            j = j + 1
+        }
+        i = i + 1
+    }
+    return c
+}
+
+-- 🔹 Matrix Transpose ---------------------------------
+
+@func ("mat2_transpose") [a11, a12, a21, a22] go {
+    return [a11, a21, a12, a22]
+}
+
+@func ("mat3_transpose") [a] go {
+    return [a[0], a[3], a[6],
+            a[1], a[4], a[7],
+            a[2], a[5], a[8]]
+}
+
+@func ("mat4_transpose") [a] go {
+    return [a[0], a[4], a[8],  a[12],
+            a[1], a[5], a[9],  a[13],
+            a[2], a[6], a[10], a[14],
+            a[3], a[7], a[11], a[15]]
+}
+
+-- 🔹 Determinant (2x2, 3x3 only) ----------------------
+
+@func ("mat2_det") [a11, a12, a21, a22] go {
+    return (a11 * a22) - (a12 * a21)
+}
+
+@func ("mat3_det") [a] go {
+    return a[0]*(a[4]*a[8] - a[5]*a[7]) -
+           a[1]*(a[3]*a[8] - a[5]*a[6]) +
+           a[2]*(a[3]*a[7] - a[4]*a[6])
+}
+
+-- 🔹 Inverse (2x2 only, demo) -------------------------
+
+@func ("mat2_inv") [a11, a12, a21, a22] go {
+    det = mat2_det(a11, a12, a21, a22)
+    if det == 0 { dismiss }
+    inv_det = 1 / det
+    return [ a22*inv_det, -a12*inv_det,
+            -a21*inv_det,  a11*inv_det ]
+}
+
+-- ======================================================
+-- End of stdlib/matrix.np
+-- ======================================================
+
+
+-- ======================================================
 -- End of stdlib/math.np
 -- ======================================================

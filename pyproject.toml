@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "npaquetc"
+version = "1.0.0"
+description = "NeoPaquet Compiler (AOT → LLVM IR → NASM → Native Executable)"
+authors = [{ name = "NeoPaquet Project" }]
+license = { text = S.U.E.T." }
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = ["llvmlite>=0.42.0"]
+
+[project.urls]
+Homepage = "https://github.com/JoeySoprano420/NeoPaquet"
+Repository = "https://github.com/JoeySoprano420/NeoPaquet/tree/main/npaquetc"
+
+[project.scripts]
+npaquetc = "npaquetc.main:main"

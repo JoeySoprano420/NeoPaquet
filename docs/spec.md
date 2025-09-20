@@ -68,3 +68,110 @@ expr         = literal | ident | expr binop expr | "(" expr ")" ;
 literal      = number | string ;
 number       = digit { digit } ;  (* base-12 *)
 digit        = "0"…"9" | "a" | "b" ;
+
+
+
+---
+
+## 4. Semantics
+
+### 4.1 Execution Model
+
+* **AOT-Compiled**: Source is compiled at build-time to native executables.
+* **Zero-Cost Runtime**: No VM or interpreter overhead.
+* **Execution-Oriented**: Every construct maps directly to LLVM/NASM primitives.
+
+### 4.2 Memory Model (CIAM)
+
+* Memory semantics defined by **Contextual Inference Abstraction Macros**.
+* Examples:
+
+  ```neopaquet
+  mem.arena { size=1024 }
+  mem.slice { start=0, len=12 }
+  ```
+* Guarantees:
+
+  * No implicit GC
+  * Anti-use-after-free baked in
+  * Manual and semi-automatic macros supported
+
+### 4.3 Error Handling
+
+* `try` introduces a protected execution block.
+* `catch` handles recoverable errors.
+* `retry` restarts execution under failure.
+* `clean` ensures cleanup.
+* `dismiss` aborts execution safely.
+
+---
+
+## 5. Standard Library (Draft)
+
+### io.np
+
+```neopaquet
+print ["Hello NeoPaquet!"]
+```
+
+### math.np
+
+```neopaquet
+x = 5a   -- base-12 number (5*12 + 10 = 70)
+y = x * 2
+return y
+```
+
+---
+
+## 6. Interoperability
+
+* All NeoPaquet code is **exposed to C ABI**.
+* Direct import/export with:
+
+  * C, LLVM, NASM, WASM
+  * Unity, Unreal Engine
+  * OpenGL, Vulkan, DirectX
+
+---
+
+## 7. Optimizations
+
+Baked-in optimizations (no flags required):
+
+* Constant folding
+* Loop unrolling
+* Peephole passes
+* Tail-call elimination
+* Profile-guided optimization (PGO)
+* Intrinsic vectorization
+
+---
+
+## 8. Example Programs
+
+### Hello World
+
+```neopaquet
+src () "stdout" { print ["Hello NeoPaquet!"] } run
+```
+
+### Factorial
+
+```neopaquet
+@func ("factorial") [n] go {
+  if n <= 1 {
+    return 1
+  } else {
+    return n * factorial(n - 1)
+  }
+}
+
+src () "stdout" {
+  print ["Factorial of 5 is:"]
+  result = factorial(5)
+  print [result]
+} run
+```
+
+

@@ -1,0 +1,11 @@
+-- Simple loop test
+src () "stdout" {
+  i = 0
+  loop {
+    print [i]
+    i = i + 1
+    if i == 5 {
+      break
+    }
+  }
+} run

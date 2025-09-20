@@ -1,0 +1,10 @@
+-- Function exposed to C
+@func ("square") [n] go {
+  return n * n
+}
+
+src () "stdout" {
+  x = 7
+  print ["Square of 7 is:"]
+  print [square(x)]
+} run

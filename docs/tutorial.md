@@ -238,5 +238,4 @@ NeoPaquet is still evolving — your feedback and contributions can shape its fu
 
 
 
-⚡ Do you want me to also create a **`docs/examples/` folder** with multiple ready-to-run `.np` sample programs (hello world, factorial, fibonacci, matrix multiply, error handling, etc.)?
-```
+⚡

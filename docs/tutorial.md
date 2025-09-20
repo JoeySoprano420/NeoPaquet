@@ -1,4 +1,3 @@
-## *****
 # 🧑‍💻 NeoPaquet Tutorial
 Welcome to **NeoPaquet** — an execution-oriented, AOT-compiled language that goes from source → LLVM IR → NASM → native executables.  
 This tutorial will walk you through writing, compiling, and running your first programs.

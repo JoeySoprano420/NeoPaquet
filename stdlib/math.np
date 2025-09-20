@@ -1,0 +1,115 @@
+-- ======================================================
+-- stdlib/math.np
+-- NeoPaquet Standard Math Library
+-- Arithmetic, base-12 helpers, number theory, matrices
+-- ======================================================
+
+-- 🔹 Basic Arithmetic ----------------------------------
+
+@func ("add") [a, b] go {
+    return a + b
+}
+
+@func ("sub") [a, b] go {
+    return a - b
+}
+
+@func ("mul") [a, b] go {
+    return a * b
+}
+
+@func ("div") [a, b] go {
+    if b == 0 {
+        dismiss -- prevent divide-by-zero
+    }
+    return a / b
+}
+
+@func ("mod") [a, b] go {
+    return a % b
+}
+
+-- 🔹 Power / Exponentiation ----------------------------
+
+@func ("pow") [a, b] go {
+    result = 1
+    loop {
+        if b == 0 { break }
+        result = result * a
+        b = b - 1
+    }
+    return result
+}
+
+-- 🔹 Base-12 Helpers ----------------------------------
+
+@func ("to_base12") [n] go {
+    -- NOTE: simplistic conversion, returns string
+    buffer = mem.arena { size=32 }
+    extern ("sprintf") [buffer, "%x", n]  -- reuse hex as placeholder
+    return buffer
+}
+
+@func ("from_base12") [s] go {
+    extern ("strtol") [s, 0, 12]
+    return strtol(s, 0, 12)
+}
+
+-- 🔹 Number Theory ------------------------------------
+
+@func ("factorial") [n] go {
+    if n <= 1 { return 1 }
+    else { return n * factorial(n - 1) }
+}
+
+@func ("fibonacci") [n] go {
+    if n <= 1 { return n }
+    else { return fibonacci(n - 1) + fibonacci(n - 2) }
+}
+
+@func ("gcd") [a, b] go {
+    loop {
+        if b == 0 { return a }
+        temp = b
+        b = a % b
+        a = temp
+    }
+}
+
+@func ("lcm") [a, b] go {
+    return (a * b) / gcd(a, b)
+}
+
+-- 🔹 Matrix Ops (2x2) ---------------------------------
+
+@func ("mat_mul2x2") [a11, a12, a21, a22, b11, b12, b21, b22] go {
+    c11 = a11*b11 + a12*b21
+    c12 = a11*b12 + a12*b22
+    c21 = a21*b11 + a22*b21
+    c22 = a21*b12 + a22*b22
+
+    print ["Resulting matrix:"]
+    print_int(c11) print [" "]
+    print_int(c12) print ["\n"]
+    print_int(c21) print [" "]
+    print_int(c22) print ["\n"]
+
+    return 0
+}
+
+-- 🔹 Random Number (stub) ------------------------------
+
+@func ("rand") [] go {
+    extern ("rand") []
+    return rand()
+}
+
+@func ("srand") [seed] go {
+    extern ("srand") [seed]
+    srand(seed)
+    return 0
+}
+
+-- ======================================================
+-- End of stdlib/math.np
+-- ======================================================

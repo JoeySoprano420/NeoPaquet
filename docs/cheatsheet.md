@@ -1,5 +1,4 @@
-markdown
-# ⚡ NeoPaquet Cheatsheet
+ ⚡ NeoPaquet Cheatsheet
 Quick reference for the **NeoPaquet Language** — Execution-Oriented, Base-12, AOT compiled.
 
 ---

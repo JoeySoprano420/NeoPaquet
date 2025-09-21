@@ -17,4 +17,4 @@ Homepage = "https://github.com/JoeySoprano420/NeoPaquet"
 Repository = "https://github.com/JoeySoprano420/NeoPaquet"
 
 [project.scripts]
-npaquetc = "npaquetc.main:main"
+neopaquet = "neopaquet.main:main"

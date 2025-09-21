@@ -32,10 +32,10 @@ jobs:
       - name: Build distributions
         run: python -m build
 
-      - name: Upload build artifacts
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: neopaquet-${{ matrix.os }}
+          name: dist-${{ matrix.os }}
           path: dist/
 
   kali-build:
@@ -43,6 +43,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: kalilinux/kali-rolling
+
     steps:
       - uses: actions/checkout@v4
 
@@ -55,10 +56,10 @@ jobs:
       - name: Build distributions
         run: python3 -m build
 
-      - name: Upload build artifacts
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: neopaquet-kali
+          name: dist-kali
           path: dist/
 
   publish:
@@ -66,7 +67,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build, kali-build]
     permissions:
-      id-token: write   # Required for OIDC trusted publishing
+      id-token: write   # Required for OIDC authentication
 
     environment:
       name: pypi
@@ -78,10 +79,14 @@ jobs:
         with:
           path: dist/
 
-      - name: Flatten distributions
+      - name: Flatten all distributions
         run: |
           mkdir final-dist
-          find dist -type f -exec mv {} final-dist/ \;
+          find dist -type f -name "*.whl" -exec mv {} final-dist/ \;
+          find dist -type f -name "*.tar.gz" -exec mv {} final-dist/ \;
+
+      - name: List final artifacts
+        run: ls -l final-dist
 
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
